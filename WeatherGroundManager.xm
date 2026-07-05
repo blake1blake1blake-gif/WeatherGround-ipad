@@ -45,10 +45,10 @@
         [self changeLabelTextWithAttributedString:temperatureAttrString];
 
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 3 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-            NSDateFormatter *formatter = [NSDateFormatter new];
+            NSDateFormatter *formatter = [NSDate new];
             formatter.timeZone = [NSTimeZone localTimeZone];
 			formatter.dateFormat = @"HH:mm";
-			NSString *currentStatusTime = [formatter stringFromDate:[NSDate now]];
+			NSString *currentStatusTime = [formatter stringFromDate:[NSDate date]];
 
 			self.statusStringView.attributedText = nil;
 			[self changeLabelText:currentStatusTime];
@@ -189,7 +189,7 @@
 
 - (void)setSharedImageWithView:(WUIDynamicWeatherBackground *)backgroundView {
     if (backgroundView != nil) {
-        // Take a screenshot of the current view, to use on SBFWallpaperView's contentView's image, otherwise the background when pulling up on Notification Center and Lockscreen will be see through
+        // Take a screenshot of the current view, to use on SBFWallpaperView's contentView's image, otherwise the background when pulling up on Notification Center and Lockscreen will be see thro...
         UIGraphicsBeginImageContextWithOptions(backgroundView.bounds.size, NO, UIScreen.mainScreen.scale);
         [backgroundView drawViewHierarchyInRect:backgroundView.bounds afterScreenUpdates:YES];
         self.sharedImage = UIGraphicsGetImageFromCurrentImageContext();
@@ -214,11 +214,11 @@
                 WATodayAutoupdatingLocationModel *autoUpdatingModel = (WATodayAutoupdatingLocationModel *)self.widgetVC.todayModel;
 
                 if ([autoUpdatingModel respondsToSelector:@selector(updateLocationTrackingStatus)]) {
-			        [autoUpdatingModel updateLocationTrackingStatus];
+		        [autoUpdatingModel updateLocationTrackingStatus];
                 }
             }
            
-            
+           
             [self.widgetVC.todayModel executeModelUpdateWithCompletion:nil];
         }
         if ([self.widgetVC respondsToSelector:@selector(todayModelWantsUpdate:)] && self.widgetVC.todayModel) {
@@ -262,7 +262,7 @@
             [self.lockScreenBgView setCity:[self myCity] animate:YES];
             [self.lockScreenBgView.condition setCity:[self myCity] animationDuration:2];
 
-            /*if ([self boolForKey:@"kUseEntireWeatherView"] && [self boolForKey:@"kLockscreenEnabled"]) {
+            /*if ([self boolForKey:@ "kUseEntireWeatherView"] && [self boolForKey:@"kLockscreenEnabled"]) {
                 [self setSharedImageWithView: self.lockScreenBgView];
             }*/
 
@@ -274,7 +274,7 @@
             [self.homeScreenBgView setCity: [self myCity] animate: YES];
             [self.homeScreenBgView.condition setCity: [self myCity] animationDuration: 2];
 
-            /*if ([self boolForKey:@"kUseEntireWeatherView"] && [self boolForKey:@"kHomescreenEnabled"]) {
+            /*if ([self.boolForKey:@"kUseEntireWeatherView"] && [self.boolForKey:@"kHomescreenEnabled"]) {
                 [self setSharedImageWithView: self.homeScreenBgView];
             }*/
 
@@ -355,7 +355,7 @@
     // Make a new Mutable Attributed String
 	NSMutableAttributedString *attrString = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@", prefixString]];
 	// Make a new NSTextAttachment variable and set the image
-	NSTextAttachment *imgAttachment = [[NSTextAttachment alloc] init];	
+	NSTextAttachment *imgAttachment = [[NSTextAttachment alloc] init];
 	imgAttachment.bounds = CGRectMake(0,-12,35,35);
 	imgAttachment.image = weatherImg;
 	// Make a new attributed string with the NSTextAttachment

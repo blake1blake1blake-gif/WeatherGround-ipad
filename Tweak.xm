@@ -41,14 +41,14 @@ NSString *kTemperatureUnit;
 			[formatter setLocale:[NSLocale currentLocale]];
     		[formatter setTimeStyle:NSDateFormatterShortStyle];
 			
-			NSRange amRange = [[formatter stringFromDate:[NSDate now]] rangeOfString:[formatter AMSymbol]];
-			NSRange pmRange = [[formatter stringFromDate:[NSDate now]] rangeOfString:[formatter PMSymbol]];
+			NSRange amRange = [[formatter stringFromDate:[NSDate date]] rangeOfString:[formatter AMSymbol]];
+			NSRange pmRange = [[formatter stringFromDate:[NSDate date]] rangeOfString:[formatter PMSymbol]];
 			
 			BOOL is24h = (amRange.location == NSNotFound && pmRange.location == NSNotFound);
 			
 			[formatter setDateFormat:is24h ? @"HH:mm" : @"hh:mm"];
 
-			NSString *currentStatusTime = [formatter stringFromDate:[NSDate now]];
+			NSString *currentStatusTime = [formatter stringFromDate:[NSDate date]];
 
 			self.attributedText = nil;
 			[self changeLabelText:currentStatusTime];
@@ -127,10 +127,10 @@ NSString *kTemperatureUnit;
 	if (kUseEntireWeatherView && [[WeatherGroundManager sharedManager] sharedImage] != nil) {
 		if ((kHomescreenEnabled && [self.variantCacheIdentifier isEqualToString:@"home"]) || (kLockscreenEnabled && [self.variantCacheIdentifier isEqualToString:@"lock"]) || (!kHomescreenEnabled && !kLockscreenEnabled)) {
 			if ([((UIImageView *)self.contentView) respondsToSelector:@selector(setImage:)]) {
-				((UIImageView *)self.contentView).image = [[WeatherGroundManager sharedManager] sharedImage];	
+				((UIImageView *)self.contentView).image = [[WeatherGroundManager sharedManager] sharedImage];
 			}
 		}		
-	}	
+	}
 }
 
 %end
@@ -195,10 +195,10 @@ static void updateWGState(CFNotificationCenterRef center, void *observer, CFStri
 		kTweakEnabled = [plistDict objectForKey:@"kTweakEnabled"] ? [[plistDict objectForKey:@"kTweakEnabled"] boolValue] : NO;
 		kUseEntireWeatherView = [plistDict objectForKey:@"kUseEntireWeatherView"] ? [[plistDict objectForKey:@"kUseEntireWeatherView"] boolValue] : NO;
 		kUseWeatherEffectsOnly = [plistDict objectForKey:@"kUseWeatherEffectsOnly"] ? [[plistDict objectForKey:@"kUseWeatherEffectsOnly"] boolValue] : NO;
-
+	
 		kLockscreenEnabled = [plistDict objectForKey:@"kLockscreenEnabled"] ? [[plistDict objectForKey:@"kLockscreenEnabled"] boolValue] : NO;
 		kHomescreenEnabled = [plistDict objectForKey:@"kHomescreenEnabled"] ? [[plistDict objectForKey:@"kHomescreenEnabled"] boolValue] : NO;
-
+	
 		kEnableStatusBarTemperature = [plistDict objectForKey:@"kEnableStatusBarTemperature"] ? [[plistDict objectForKey:@"kEnableStatusBarTemperature"] boolValue] : NO;
 		kTemperatureUnit = [plistDict objectForKey:@"kTemperatureUnit"] ? [[plistDict objectForKey:@"kTemperatureUnit"] stringValue] : @"celsius";
 		
