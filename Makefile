@@ -7,6 +7,7 @@ TWEAK_NAME = WeatherGround
 
 WeatherGround_FILES = $(wildcard *.xm)
 WeatherGround_CFLAGS = -fobjc-arc -Wno-unguarded-availability-new
+WeatherGround_CFLAGS += -I./include
 WeatherGround_PRIVATE_FRAMEWORKS = SpringBoardFoundation Weather WeatherUI
 
 
