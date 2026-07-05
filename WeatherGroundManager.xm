@@ -1,5 +1,4 @@
 #import "WeatherGroundManager.h"
-#include <RemoteLog.h>
 
 @implementation WeatherGroundManager
 
@@ -45,14 +44,14 @@
         [self changeLabelTextWithAttributedString:temperatureAttrString];
 
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 3 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-            NSDateFormatter *formatter = [NSDate new];
+            NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
             formatter.timeZone = [NSTimeZone localTimeZone];
-			formatter.dateFormat = @"HH:mm";
-			NSString *currentStatusTime = [formatter stringFromDate:[NSDate date]];
+            formatter.dateFormat = @"HH:mm";
+            NSString *currentStatusTime = [formatter stringFromDate:[NSDate date]];
 
-			self.statusStringView.attributedText = nil;
-			[self changeLabelText:currentStatusTime];
-		});
+            self.statusStringView.attributedText = nil;
+            [self changeLabelText:currentStatusTime];
+        });
     }
 }
 
@@ -82,22 +81,22 @@
     SBWallpaperController *wallpaperController = [%c(SBWallpaperController) sharedInstance];
     SBFWallpaperView *sharedWallpaperView;
     SBFWallpaperView *lockscreenWallpaperView;
-	SBFWallpaperView *homescreenWallpaperView;
+    SBFWallpaperView *homescreenWallpaperView;
 
     if (%c(SBWallpaperViewController)) {
-		SBWallpaperViewController *wallpaperViewController = [wallpaperController valueForKey:@"_wallpaperViewController"];
-		
-		sharedWallpaperView = wallpaperViewController.sharedWallpaperView;
+        SBWallpaperViewController *wallpaperViewController = [wallpaperController valueForKey:@"_wallpaperViewController"];
+        
+        sharedWallpaperView = wallpaperViewController.sharedWallpaperView;
 
         lockscreenWallpaperView = wallpaperViewController.lockscreenWallpaperView;
-		homescreenWallpaperView = wallpaperViewController.homescreenWallpaperView;
-	}
-	else {
-		sharedWallpaperView = wallpaperController.sharedWallpaperView;
+        homescreenWallpaperView = wallpaperViewController.homescreenWallpaperView;
+    }
+    else {
+        sharedWallpaperView = wallpaperController.sharedWallpaperView;
     
         lockscreenWallpaperView = wallpaperController.lockscreenWallpaperView;
-		homescreenWallpaperView = wallpaperController.homescreenWallpaperView;
-	}
+        homescreenWallpaperView = wallpaperController.homescreenWallpaperView;
+    }
 
     // Always create this instance for the weather effects layer, but only add if enabled
     self.sharedBgView = [[%c(WUIDynamicWeatherBackground) alloc] initWithFrame:UIScreen.mainScreen.bounds];
@@ -132,237 +131,4 @@
             if ([self boolForKey:@"kUseEntireWeatherView"]) {
                 [homescreenWallpaperView addSubview:self.homeScreenBgView];
 
-                [self setSharedImageWithView:self.homeScreenBgView];
-            }
-        }
-    }
-}
-
-- (void)setupWeatherEffectLayers {
-    if ([self boolForKey:@"kUseWeatherEffectsOnly"] && [self boolForKey:@"kUseEntireWeatherView"] == NO) {
-        SBWallpaperController *wallpaperController = [%c(SBWallpaperController) sharedInstance];
-        SBFWallpaperView *sharedWallpaperView;
-        SBFWallpaperView *lockscreenWallpaperView;
-        SBFWallpaperView *homescreenWallpaperView;
-
-        if (%c(SBWallpaperViewController)) {
-            SBWallpaperViewController *wallpaperViewController = [wallpaperController valueForKey:@"_wallpaperViewController"];
-            
-            sharedWallpaperView = wallpaperViewController.sharedWallpaperView;
-
-            lockscreenWallpaperView = wallpaperViewController.lockscreenWallpaperView;
-            homescreenWallpaperView = wallpaperViewController.homescreenWallpaperView;
-        }
-        else {
-            sharedWallpaperView = wallpaperController.sharedWallpaperView;
-        
-            lockscreenWallpaperView = wallpaperController.lockscreenWallpaperView;
-            homescreenWallpaperView = wallpaperController.homescreenWallpaperView;
-        }
-
-        if (sharedWallpaperView != nil && self.sharedBgView != nil) {
-            CALayer *nLayer = [self weatherEffectsLayerForWeatherView:nil];
-			[sharedWallpaperView.layer addSublayer:nLayer];
-        }
-        else if (lockscreenWallpaperView != nil && homescreenWallpaperView != nil && self.lockScreenBgView != nil && self.homeScreenBgView != nil && sharedWallpaperView == nil)  {
-            if ([self boolForKey:@"kLockscreenEnabled"]) {
-                CALayer *nLayer = [self weatherEffectsLayerForWeatherView:self.lockScreenBgView];
-                [lockscreenWallpaperView.layer addSublayer:nLayer];
-            }
-            if ([self boolForKey:@"kHomescreenEnabled"]) {
-                CALayer *nLayer = [self weatherEffectsLayerForWeatherView:self.homeScreenBgView]; 
-                [homescreenWallpaperView.layer addSublayer:nLayer];
-            }
-        }
-    }
-}
-
-- (CALayer *)weatherEffectsLayerForWeatherView:(WUIDynamicWeatherBackground *)weatherView {
-	CALayer *nLayer = weatherView != nil ? weatherView.condition.layer : self.sharedBgView.condition.layer;
-	nLayer.bounds = UIScreen.mainScreen.nativeBounds;
-	nLayer.allowsGroupOpacity = YES;
-	nLayer.position = CGPointMake(0, UIScreen.mainScreen.bounds.size.height);
-	nLayer.geometryFlipped = YES;
-
-	return nLayer;
-}
-
-- (void)setSharedImageWithView:(WUIDynamicWeatherBackground *)backgroundView {
-    if (backgroundView != nil) {
-        // Take a screenshot of the current view, to use on SBFWallpaperView's contentView's image, otherwise the background when pulling up on Notification Center and Lockscreen will be see thro...
-        UIGraphicsBeginImageContextWithOptions(backgroundView.bounds.size, NO, UIScreen.mainScreen.scale);
-        [backgroundView drawViewHierarchyInRect:backgroundView.bounds afterScreenUpdates:YES];
-        self.sharedImage = UIGraphicsGetImageFromCurrentImageContext();
-        UIGraphicsEndImageContext();
-    }
-}
-
-- (void)updateModel {
-    if (!self.widgetVC) {
-        self.widgetVC = [[%c(WALockscreenWidgetViewController) alloc] init];
-
-        if ([self.widgetVC respondsToSelector:@selector(_setupWeatherModel)]) {
-            [self.widgetVC _setupWeatherModel];
-            
-        }
-    }
-
-    if (self.widgetVC) {
-        if ([self.widgetVC.todayModel respondsToSelector:@selector(executeModelUpdateWithCompletion:)]) {
-            
-            if ([self.widgetVC.todayModel isKindOfClass:[WATodayAutoupdatingLocationModel class]]) {
-                WATodayAutoupdatingLocationModel *autoUpdatingModel = (WATodayAutoupdatingLocationModel *)self.widgetVC.todayModel;
-
-                if ([autoUpdatingModel respondsToSelector:@selector(updateLocationTrackingStatus)]) {
-		        [autoUpdatingModel updateLocationTrackingStatus];
-                }
-            }
-           
-           
-            [self.widgetVC.todayModel executeModelUpdateWithCompletion:nil];
-        }
-        if ([self.widgetVC respondsToSelector:@selector(todayModelWantsUpdate:)] && self.widgetVC.todayModel) {
-            [self.widgetVC todayModelWantsUpdate:self.widgetVC.todayModel];
-        }
-        if ([self.widgetVC respondsToSelector:@selector(updateWeather)]) {
-            [self.widgetVC updateWeather];
-        }
-        if ([self.widgetVC respondsToSelector:@selector(_updateTodayView)]) {
-		    [self.widgetVC _updateTodayView];
-        }
-        if ([self.widgetVC respondsToSelector:@selector(_updateWithReason:)]) {
-            [self.widgetVC _updateWithReason:nil];
-        }
-        
-        /*if ([self.widgetVC respondsToSelector:@selector(_temperature)]) {
-		    self.currentTemperature = [self.widgetVC _temperature];
-	    }
-
-        if ([self.widgetVC respondsToSelector:@selector(_locationName)]) {
-		    self.myCity = [self.widgetVC _locationName];
-	    }*/
-    }
-
-    if (self.widgetVC.todayModel.forecastModel.city) {
-        self.myCity = self.widgetVC.todayModel.forecastModel.city;
-
-        if (self.sharedBgView != nil) {
-            [self.sharedBgView setCity:[self myCity] animate:YES];
-            [self.sharedBgView.condition setCity:[self myCity] animationDuration:2];
-
-            /*if ([self boolForKey:@"kUseEntireWeatherView"]) {
-                [self setSharedImageWithView:self.sharedBgView];
-            }*/
-
-            if ([self boolForKey:@"kUseWeatherEffectsOnly"]) {
-                [self setupWeatherEffectLayers];
-            }
-        }
-        if (self.lockScreenBgView != nil) {
-            [self.lockScreenBgView setCity:[self myCity] animate:YES];
-            [self.lockScreenBgView.condition setCity:[self myCity] animationDuration:2];
-
-            /*if ([self boolForKey:@ "kUseEntireWeatherView"] && [self boolForKey:@"kLockscreenEnabled"]) {
-                [self setSharedImageWithView: self.lockScreenBgView];
-            }*/
-
-            if ([self boolForKey: @ "kUseWeatherEffectsOnly"]) {
-                [self setupWeatherEffectLayers];
-            }
-        }
-        if (self.homeScreenBgView != nil) {
-            [self.homeScreenBgView setCity: [self myCity] animate: YES];
-            [self.homeScreenBgView.condition setCity: [self myCity] animationDuration: 2];
-
-            /*if ([self.boolForKey:@"kUseEntireWeatherView"] && [self.boolForKey:@"kHomescreenEnabled"]) {
-                [self setSharedImageWithView: self.homeScreenBgView];
-            }*/
-
-            if ([self boolForKey: @ "kUseWeatherEffectsOnly"]) {
-                [self setupWeatherEffectLayers];
-            }
-        }
-    }
-}
-
-- (void)pauseWG {
-    if (self.sharedBgView != nil) {
-        [self.sharedBgView.condition pause];
-    }
-    if (self.lockScreenBgView != nil) {
-        [self.lockScreenBgView.condition pause];
-    }
-    if (self.homeScreenBgView != nil) {
-        [self.homeScreenBgView.condition pause];
-    }
-}
-
-- (void)resumeWG {
-    if (self.sharedBgView != nil) {
-        [self.sharedBgView.condition resume];
-    }
-    if (self.lockScreenBgView != nil) {
-        [self.lockScreenBgView.condition resume];
-        
-    }
-    if (self.homeScreenBgView != nil) {
-        [self.homeScreenBgView.condition resume];
-    }
-}
-
-- (void)updateCityForCity:(City *)city {
-    city = self.myCity;
-}
-
-- (NSDictionary *)temperatureInfo:(NSString *)unit {
-    [self updateModel];
-
-	int temperature = 0;
-
-    if (self.widgetVC != nil && self.widgetVC.todayModel.forecastModel.currentConditions != nil) {
-        if ([unit isEqualToString:@"celsius"]) {
-            temperature = (int)self.widgetVC.todayModel.forecastModel.currentConditions.temperature.celsius;
-        }
-        else if ([unit isEqualToString:@"fahrenheit"]) {
-            temperature = (int)ceil(self.widgetVC.todayModel.forecastModel.currentConditions.temperature.fahrenheit);
-        }
-        else if ([unit isEqualToString:@"kelvin"])  {
-            temperature = (int)ceil(self.widgetVC.todayModel.forecastModel.currentConditions.temperature.kelvin);
-        }
-    }
-
-    int conditionCode = [self currentConditionCode];
-    NSMutableAttributedString *weatherString = [self stringForWeatherImage:[self getImageForCondition:conditionCode style:1] withPrefix:[NSString stringWithFormat:@"%d°", temperature]]; 
-    NSDictionary *infoDict = @{@"weatherString": weatherString};
-    return infoDict;
-}
-
-
-- (int)currentConditionCode {
-    if (self.widgetVC != nil && self.widgetVC.todayModel.forecastModel.currentConditions != nil) {
-        int conditionCode = (int)self.widgetVC.todayModel.forecastModel.currentConditions.conditionCode;
-	    return conditionCode;
-    }
-    return 0;
-}
-
-- (UIImage *)getImageForCondition:(NSInteger)conditionCode style:(int)style {
-	UIImage *image = [WeatherImageLoader conditionImageWithConditionIndex:conditionCode style:style];
-	return image;
-}
-
-- (NSMutableAttributedString *)stringForWeatherImage:(UIImage *)weatherImg withPrefix:(NSString *)prefixString{
-    // Make a new Mutable Attributed String
-	NSMutableAttributedString *attrString = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@", prefixString]];
-	// Make a new NSTextAttachment variable and set the image
-	NSTextAttachment *imgAttachment = [[NSTextAttachment alloc] init];
-	imgAttachment.bounds = CGRectMake(0,-12,35,35);
-	imgAttachment.image = weatherImg;
-	// Make a new attributed string with the NSTextAttachment
-	NSAttributedString *attrStringWithWeatherImage = [NSAttributedString attributedStringWithAttachment:imgAttachment];
-	// Insert the attributed string containing our NSTextAttachment at the start of the string - example: {weatherIcon} 14°
-	[attrString insertAttributedString:attrStringWithWeatherImage atIndex:0];
-
-    return attrString;
-}
-@end
+{

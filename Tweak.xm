@@ -1,4 +1,3 @@
-#include <RemoteLog.h>
 #include <time.h>
 #include "Tweak.h"
 
@@ -39,7 +38,7 @@ NSString *kTemperatureUnit;
 		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 3 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
 			NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
 			[formatter setLocale:[NSLocale currentLocale]];
-    		[formatter setTimeStyle:NSDateFormatterShortStyle];
+			[formatter setTimeStyle:NSDateFormatterShortStyle];
 			
 			NSRange amRange = [[formatter stringFromDate:[NSDate date]] rangeOfString:[formatter AMSymbol]];
 			NSRange pmRange = [[formatter stringFromDate:[NSDate date]] rangeOfString:[formatter PMSymbol]];
