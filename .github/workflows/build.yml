@@ -25,13 +25,31 @@ jobs:
       - name: Install Theos
         run: |
           git clone --depth=1 https://github.com/theos/theos.git $HOME/theos
+
+      - name: Setup THEOS environment and verify dm.pl
+        run: |
+          # Export THEOS and prepend its bin to PATH for subsequent steps
           echo "THEOS=$HOME/theos" >> $GITHUB_ENV
+          echo "PATH=$HOME/theos/bin:$PATH" >> $GITHUB_ENV
+
+          echo "Listing $HOME/theos/bin"
+          ls -la $HOME/theos/bin || true
+
+          if [ ! -f "$HOME/theos/bin/dm.pl" ]; then
+            echo "ERROR: dm.pl not found at $HOME/theos/bin/dm.pl" >&2
+            exit 1
+          fi
+
+          echo "dm.pl found — proceeding"
 
       - name: Build package with Theos
-        env:
-          THEOS: ${{ env.THEOS }}
         run: |
           set -e
+          export THEOS="$HOME/theos"
+          export PATH="$THEOS/bin:$PATH"
+          echo "THEOS=$THEOS"
+          echo "PATH=$PATH"
+          which dm.pl || true
           make package
 
       - name: Collect .deb artifacts
