@@ -35,6 +35,17 @@ jobs:
             chmod +x "$HOME/theos/bin/dm.pl" || true
           fi
 
+      - name: Fetch RemoteLog
+        run: |
+          set -e
+          if [ -d "vendor/RemoteLog" ]; then
+            echo "vendor/RemoteLog already exists"
+          else
+            echo "Cloning RemoteLog into vendor/RemoteLog"
+            git clone --depth=1 https://github.com/willpowell8/RemoteLog.git vendor/RemoteLog
+          fi
+          ls -la vendor/RemoteLog || true
+
       - name: Setup THEOS environment and verify dm.pl
         run: |
           # Export THEOS and prepend its bin to PATH for subsequent steps
