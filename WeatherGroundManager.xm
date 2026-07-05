@@ -1,4 +1,6 @@
 #import "WeatherGroundManager.h"
+#import <SpringBoard/SBWallpaperController.h>
+#import <SpringBoard/SBWallpaperViewController.h>
 
 @implementation WeatherGroundManager
 
@@ -56,25 +58,25 @@
 }
 
 - (void)changeLabelTextWithAttributedString:(NSMutableAttributedString *)text {
-	CATransition *animation = [CATransition animation];
-	animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-	animation.type = kCATransitionPush;
-	animation.subtype = kCATransitionFromTop;
-	animation.duration = 0.3;
-	[self.statusStringView.layer addAnimation:animation forKey:@"kCATransitionPush"];
+    CATransition *animation = [CATransition animation];
+    animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+    animation.type = kCATransitionPush;
+    animation.subtype = kCATransitionFromTop;
+    animation.duration = 0.3;
+    [self.statusStringView.layer addAnimation:animation forKey:@"kCATransitionPush"];
 
-	self.statusStringView.attributedText = text;
+    self.statusStringView.attributedText = text;
 }
 
 - (void)changeLabelText:(NSString *)text {
-	CATransition *animation = [CATransition animation];
-	animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-	animation.type = kCATransitionPush;
-	animation.subtype = kCATransitionFromTop;
-	animation.duration = 0.3;
-	[self.statusStringView.layer addAnimation:animation forKey:@"kCATransitionPush"];
+    CATransition *animation = [CATransition animation];
+    animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+    animation.type = kCATransitionPush;
+    animation.subtype = kCATransitionFromTop;
+    animation.duration = 0.3;
+    [self.statusStringView.layer addAnimation:animation forKey:@"kCATransitionPush"];
 
-	self.statusStringView.text = text;
+    self.statusStringView.text = text;
 }
 
 - (void)setupDynamicWeatherBackgrounds {
@@ -130,5 +132,50 @@
             
             if ([self boolForKey:@"kUseEntireWeatherView"]) {
                 [homescreenWallpaperView addSubview:self.homeScreenBgView];
+                [self setSharedImageWithView:self.homeScreenBgView];
+            }
+        }
+    }
+}
 
-{
+#pragma mark - Minimal stub implementations to satisfy header declarations
+
+- (void)updateModel {
+    // Minimal implementation: no-op. Original implementation may fetch/update weather model.
+}
+
+- (void)setSharedImageWithView:(WUIDynamicWeatherBackground *)backgroundView {
+    // Minimal implementation: attempt to snapshot view if possible, otherwise set nil
+    @try {
+        UIGraphicsBeginImageContextWithOptions(backgroundView.bounds.size, NO, [UIScreen mainScreen].scale);
+        [backgroundView drawViewHierarchyInRect:backgroundView.bounds afterScreenUpdates:YES];
+        UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        self.sharedImage = image;
+    } @catch (NSException *exception) {
+        self.sharedImage = nil;
+    }
+}
+
+- (void)setupWeatherEffectLayers {
+    // No-op stub
+}
+
+- (void)pauseWG {
+    // No-op stub
+}
+
+- (void)resumeWG {
+    // No-op stub
+}
+
+- (CALayer *)weatherEffectsLayerForWeatherView:(WUIDynamicWeatherBackground *)weatherView {
+    // Return nil as a safe default
+    return nil;
+}
+
+- (void)updateCityForCity:(City *)city {
+    self.myCity = city;
+}
+
+@end
