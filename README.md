@@ -14,8 +14,8 @@ WeatherGround offers 3 (+ bonus) features currently:
 - Tapping on the time in status bar to see the current temperature!
 - (BONUS) If you have 2 different wallpapers, you can enable/disable the background or effect for the homescreen and lockscreen separately
 
-**The tweak only fully works on iPhones (X device recommended), iPads do not support the wallpaper features**
-**Supports iOS 13.0 to 14.6**
-
+**Note:** This iOS 12 fork supports both iPhones and iPads (including iPad mini 2 running iOS 12.5.8).
+**Supports iOS 12.0 to 12.5.8 on iPhone and iPad**
+**Original version supports iOS 13.0 to 14.6 on iPhones only**
 
 Credits to @NSExceptional for the wallpaper idea and the info needed to make that feature possible.

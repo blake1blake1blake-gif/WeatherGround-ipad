@@ -210,13 +210,15 @@ static void updateWGState(CFNotificationCenterRef center, void *observer, CFStri
 			Class LockScreenVCClass;
 			if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"13.0")) {
 				LockScreenVCClass = %c(CSCoverSheetViewController);
-			} else {
+			} else if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"12.0")) {
 				LockScreenVCClass = %c(SBDashBoardViewController);
+			} else {
+				LockScreenVCClass = %c(SBLockScreenViewController);
 			}
 			%init(LockScreenVC=LockScreenVCClass);
 		
 			[WeatherGroundManager sharedManager];
-			CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, updateWGState, CFSTR("com.apple.springboard.screenchanged"), NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
+			CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, updateWGState, CFSTR("com.apple.springboard.screenchanged"), NULL, CFNotificationSuspensionBehaviorDeliverImmediate);
 		}
 	}
 }
