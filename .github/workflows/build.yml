@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     steps:
       - name: Checkout repository
@@ -18,34 +18,14 @@ jobs:
 
       - name: Install dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y git build-essential clang lzma dpkg-dev debhelper libssl-dev libz-dev curl
+          set -e
+          brew update || true
+          brew install dpkg ldid || true
 
       - name: Install Theos
         run: |
           git clone --depth=1 https://github.com/theos/theos.git $HOME/theos
           echo "THEOS=$HOME/theos" >> $GITHUB_ENV
-
-      - name: Install iPhoneOS12.4 SDK (from secret IOS12_SDK_URL)
-        env:
-          THEOS: ${{ env.THEOS }}
-          IOS12_SDK_URL: ${{ secrets.IOS12_SDK_URL }}
-        run: |
-          set -e
-          SDK_DIR="$HOME/theos/sdks/iPhoneOS12.4.sdk"
-          if [ -d "$SDK_DIR" ]; then
-            echo "iPhoneOS12.4 SDK already present"
-          else
-            if [ -z "$IOS12_SDK_URL" ]; then
-              echo "ERROR: Secret IOS12_SDK_URL is not set. Please add a repository secret that points to a downloadable iPhoneOS12.4 SDK tarball (e.g., https://example.com/iPhoneOS12.4.sdk.tar.gz)" >&2
-              exit 1
-            fi
-            echo "Downloading iPhoneOS12.4 SDK from secret URL..."
-            curl -L "$IOS12_SDK_URL" -o /tmp/iphoneos12.tar.gz
-            mkdir -p "$HOME/theos/sdks"
-            tar -xzf /tmp/iphoneos12.tar.gz -C "$HOME/theos/sdks"
-            echo "Installed SDK to $HOME/theos/sdks"
-          fi
 
       - name: Build package with Theos
         env:
