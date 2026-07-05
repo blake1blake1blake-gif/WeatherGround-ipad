@@ -1,9 +1,9 @@
 Package: com.tr1fecta.weatherground
 Name: WeatherGround
 Depends: mobilesubstrate
-Version: 1.4
+Version: 1.5-ios12
 Architecture: iphoneos-arm
-Description: Weather right at your fingertips!
+Description: Weather right at your fingertips! (iOS 12+ iPad/iPhone support)
 Maintainer: Tr1Fecta
 Author: Tr1Fecta
 Section: Tweaks
