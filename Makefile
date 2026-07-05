@@ -5,9 +5,8 @@ include $(THEOS)/makefiles/common.mk
 
 TWEAK_NAME = WeatherGround
 
-WeatherGround_FILES = $(wildcard *.xm) vendor/RemoteLog/RemoteLog.m
+WeatherGround_FILES = $(wildcard *.xm)
 WeatherGround_CFLAGS = -fobjc-arc -Wno-unguarded-availability-new
-WeatherGround_CFLAGS += -I./vendor/RemoteLog
 WeatherGround_PRIVATE_FRAMEWORKS = SpringBoardFoundation Weather WeatherUI
 
 
