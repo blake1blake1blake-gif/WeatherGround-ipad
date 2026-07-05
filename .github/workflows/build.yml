@@ -38,7 +38,35 @@ jobs:
           mkdir -p artifacts
           cp packages/*.deb artifacts/ || true
 
-      - name: Upload artifact
+      - name: Create GitHub release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v1.4
+          release_name: "WeatherGround v1.4 (iOS 12)"
+          body: "Built by GitHub Actions (Theos) for iOS 12.4 compatibility. Artifacts attached."
+          draft: false
+          prerelease: false
+
+      - name: Upload release assets
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+          if compgen -G "artifacts/*.deb" > /dev/null; then
+            for f in artifacts/*.deb; do
+              filename=$(basename "$f")
+              echo "Uploading $filename to release"
+              upload_url="${{ steps.create_release.outputs.upload_url }}?name=$filename"
+              curl -s -X POST -H "Authorization: token $GITHUB_TOKEN" -H "Content-Type: application/octet-stream" --data-binary @"$f" "$upload_url"
+            done
+          else
+            echo "No .deb artifacts found to upload"
+          fi
+
+      - name: Upload artifact (workflow)
         uses: actions/upload-artifact@v4
         with:
           name: weatherground-debs
