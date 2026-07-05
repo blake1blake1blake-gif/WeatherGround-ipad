@@ -1,0 +1,46 @@
+name: Build WeatherGround Tweak
+
+on:
+  push:
+    branches:
+      - ios12-ipad-support
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ios12-ipad-support
+          fetch-depth: 0
+
+      - name: Setup build environment
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential fakeroot dpkg clang ldid git
+
+      - name: Clone Theos
+        run: |
+          git clone --depth=1 https://github.com/theos/theos.git ${{ runner.temp }}/theos
+          echo "THEOS=${{ runner.temp }}/theos" >> $GITHUB_ENV
+
+      - name: Build Package
+        run: |
+          export THEOS=${{ runner.temp }}/theos
+          export PATH=$THEOS/bin:$PATH
+          cd ${{ github.workspace }}
+          make clean || true
+          make package FINALPACKAGE=1
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        if: success()
+        with:
+          tag_name: v1.5-ios12-${{ github.run_number }}
+          name: 'WeatherGround v1.5-ios12 Build #${{ github.run_number }}'
+          files: packages/*.deb
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
