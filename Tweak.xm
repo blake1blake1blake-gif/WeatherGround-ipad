@@ -14,7 +14,8 @@ NSString *kTemperatureUnit;
 %hook _UIStatusBarStringView 
 
 - (instancetype)initWithFrame:(CGRect)frame {
-	if ((self = %orig(frame))) {
+	self = %orig;
+	if (self) {
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setTemperatureWithNotification:) name:@"wgSetTemperatureNotification" object:nil];
 	}
 	return self;
