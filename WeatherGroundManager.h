@@ -1,5 +1,7 @@
 #import "Tweak.h"
 
+@class WALockscreenWidgetViewController;
+
 @interface WeatherGroundManager : NSObject
 
 
