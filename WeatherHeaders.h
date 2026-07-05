@@ -1,4 +1,5 @@
 #include <Weather/City.h>
+@class WFTemperature;
 #include <Weather/TWCCityUpdater.h>
 #include <Weather/WeatherPreferences.h>
 #include <Weather/WeatherImageLoader.h>
@@ -134,81 +135,6 @@
 @property (nonatomic,copy,readonly) NSString * variantCacheIdentifier; 
 @property (nonatomic,retain) UIView * contentView;     
 @end
-
-@interface SBWallpaperViewController : NSObject
-@property (nonatomic,retain) SBFWallpaperView *lockscreenWallpaperView;
-@property (nonatomic,retain) SBFWallpaperView *homescreenWallpaperView;
-@property (nonatomic,retain) SBFWallpaperView *sharedWallpaperView;
-- (SBFWallpaperView *)_activeWallpaperView;
-@end
-
-@interface SBWallpaperController : NSObject
-@property (nonatomic,retain) SBFWallpaperView * lockscreenWallpaperView;
-@property (nonatomic,retain) SBFWallpaperView * homescreenWallpaperView;
-@property (nonatomic,retain) SBFWallpaperView * sharedWallpaperView;
-+(id)sharedInstance;
-@end
-
-@interface WALockscreenWidgetViewController : UIViewController
-@property (nonatomic, strong) WATodayModel *todayModel;
-+ (WALockscreenWidgetViewController *)sharedInstanceIfExists;
-- (id)_temperature;
-- (id)_locationName;
-- (void)updateWeather;
-- (void)_updateTodayView;
-- (void)_updateWithReason:(id)reason;
-- (void)_setupWeatherModel;
-- (void)todayModelWantsUpdate:(WATodayModel *)todayModel;
-
-@end
-
-
-@interface WAGreetingView : UIView {
-    UIImageView * _conditionImageView;
-    NSMutableArray * _constraints;
-    bool  _isViewCreated;
-    UIColor * _labelColor;
-    UILabel * _natualLanguageDescriptionLabel;
-    UILabel * _temperatureLabel;
-    WATodayAutoupdatingLocationModel * _todayModel;
-}
-
-@property (nonatomic, retain) UIImageView *conditionImageView;
-@property (nonatomic, retain) NSMutableArray *constraints;
-@property (nonatomic) bool isViewCreated;
-@property (nonatomic, retain) UIColor *labelColor;
-@property (nonatomic, retain) UILabel *natualLanguageDescriptionLabel;
-@property (nonatomic, retain) UILabel *temperatureLabel;
-@property (nonatomic, retain) WATodayAutoupdatingLocationModel *todayModel;
-
-- (id)_conditionsImage;
-- (id)_temperature;
-- (id)conditionImageView;
-- (id)constraints;
-- (void)createViews;
-- (void)dealloc;
-- (id)init;
-- (id)initWithColor:(id)arg1;
-- (bool)isViewCreated;
-- (id)labelColor;
-- (id)natualLanguageDescriptionLabel;
-- (void)setConditionImageView:(UIImageView *)arg1;
-- (void)setConstraints:(NSMutableArray *)arg1;
-- (void)setIsViewCreated:(bool)arg1;
-- (void)setLabelColor:(UIColor *)arg1;
-- (void)setNatualLanguageDescriptionLabel:(UILabel *)arg1;
-- (void)setTemperatureLabel:(UILabel *)arg1;
-- (void)setTodayModel:(WATodayAutoupdatingLocationModel *)arg1;
-- (void)setupConstraints;
-- (void)startService;
-- (id)temperatureLabel;
-- (id)todayModel;
-- (void)updateConstraints;
-- (void)updateLabelColors;
-- (void)updateView;
-
-@end
-
 
 @interface SBMainDisplaySceneLayoutStatusBarView : UIView {
     _UIStatusBar *_statusBarUnderlyingViewAccessor;
