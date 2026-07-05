@@ -25,6 +25,15 @@ jobs:
       - name: Install Theos
         run: |
           git clone --depth=1 https://github.com/theos/theos.git $HOME/theos
+          # Init vendor submodules (dm.pl and others) so symlinks in $THEOS/bin are valid
+          git -C $HOME/theos submodule update --init --recursive || true
+          # Make sure dm.pl is executable if present
+          if [ -f "$HOME/theos/vendor/dm.pl/dm.pl" ]; then
+            chmod +x "$HOME/theos/vendor/dm.pl/dm.pl" || true
+          fi
+          if [ -f "$HOME/theos/bin/dm.pl" ]; then
+            chmod +x "$HOME/theos/bin/dm.pl" || true
+          fi
 
       - name: Setup THEOS environment and verify dm.pl
         run: |
